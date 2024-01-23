@@ -34,25 +34,34 @@ function App() {
   // }, []);
 
   useEffect(() => {
+    const controler = new AbortController();
+    const signal = controler.signal;
     async function fetchData() {
       try {
         setIsLoading(true);
         const { data } = await axios.get(
-          `https://rickandmortyapi.com/api/character?name=${query}`
+          `https://rickandmortyapi.com/api/character?name=${query}`,
+          { signal }
         );
         setCharacters(data.results.slice(0, 5));
       } catch (error) {
-        setCharacters([]);
-        toast.error(error.response.data.error);
+        if (!axios.isCancel()) {
+          setCharacters([]);
+          toast.error(error.response.data.error);
+        }
       } finally {
         setIsLoading(false);
       }
     }
-    if (query.length < 3) {
-      setCharacters([]);
-      return;
-    }
+
+    // if (query.length < 1) {
+    //   return setCharacters([]);
+    // }
+
     fetchData();
+    return () => {
+      controler.abort();
+    };
   }, [query]);
 
   const handleSelectCharacter = (id) => {
