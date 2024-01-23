@@ -130,7 +130,7 @@ function EpisodeList({ episodes }) {
         </button>
       </div>
       <ul>
-        {sortedEpisodes.map((episode, index) => (
+        {sortedEpisodes.slice(0, 5).map((episode, index) => (
           <li key={episode.id}>
             <div>
               {String(index + 1).padStart(2, "0")} - {episode.episode} :
